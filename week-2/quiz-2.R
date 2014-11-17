@@ -48,7 +48,6 @@ acs <- read.csv("acs.csv")
 # Load sqldf package
 library("sqldf")
 head(warpbreaks)
-sqldf("select * from warpbreaks limit 6", host="localhost:3306")
 sqldf("select pwgtp1 from acs where AGEP < 50")
 
 #
