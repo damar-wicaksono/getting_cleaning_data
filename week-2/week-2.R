@@ -3,19 +3,51 @@
 # Week - 2
 # Lectures
 #
+
 # set working directory
 setwd(paste(getwd(), "./week-2", sep=""))
 
 #
-# MySQL
-#
+# 1. Reading mySQL
+# 
+
+# Make connection and list a database
 library(RMySQL)
-m<-dbDriver("MySQL");
-con <- dbConnect(MySQL(), user='genome', 
-                 host='genome-mysql.cse.ucsc.edu');
+ucscDb <- dbConnect(MySQL(), user='genome', 
+                    host='genome-mysql.cse.ucsc.edu');
+result <- dbGetQuery(ucscDb, "show databases;")
+dbDisconnect(ucscDb) # Make sure to disconnect
+
+# Connecting to hg19 and listing tables
+hg19 <- dbConnect(MySQL(), user="genome",
+                  host="genome-mysql.cse.ucsc.edu)
+all_tables <- dbListTables(hg19)
+length(all_tables)
+
+# Get dimensions of a specific table
+dbListFields(hg19, "affyU133Plus2")
+# Get a query from a field of a specific table
+dbGetQuery(hg19, "select count(*) from affyU133Plus2")
+
+# Read from a table
+affy_data <- dbReadTable(hg19, "affyU133Plus2") # Read as a table
+head(affy_data)
+
+# Select a specific subset
+# You can make query as an object and then fetch the actual data
+query <- dbSendQuery(hg19, "select * from affyU133Plus2 where misMatches between 1 and 3")
+affy_mis <- fetch(query)
+quantile <- quantile(affy_mis$misMatches)
+# Fetch smaller amount of data
+affy_mis_small <- fetch(query, n=10)
+# Clear query result
+dbClearResult(query)
+
+# Disconnect DB connection when finishes
+dbDisconnect(hg19)
 
 #
-# HDF5 Format
+# 2. HDF5 Format
 # Hierarchical Data Format, optimize reading/writing from disk in R
 #
 
@@ -62,7 +94,7 @@ h5write(a, "example.h5", "foo/A", index=list(1:3, 1))
 h5read("example.h5", "foo/A")
 
 #
-# Reading data from the web
+# 3. Reading data from the web
 # APIs and Authentication
 # Webscrapping: Programatically extracting data from the HTML code of websites
 #
@@ -102,9 +134,9 @@ pg2 <- GET(handle=google, path="search")
 pg2
 
 #
-# Reading data from APIs (Application Programming Interfaces)
+# 4. Reading data from APIs (Application Programming Interfaces)
 #
 
 #
-# Reading from Other Sources (There is an R package for that!)
+# 5. Reading from Other Sources (There is an R package for that!)
 #
