@@ -2,21 +2,29 @@
 # Getting and Cleaning Data
 # Week - 2
 # Quiz
+#
 
 #
 # Question 1
 # Register an application with Github API
 # Access the API to get information
 # Use the data to find the time that datasharing repo was created
+#
+
+# Load Library
 library(httr)
 library(jsonlite)
+
 # 1. Find OAuth settings for Github
 oauth_endpoints("github")
+
 # 2. Register an application
 my_app <- oauth_app("github", key="a8403d65b4d8456666fd", 
                     secret="1c8067956985d47624fd70b495936c803937e643")
+
 # 3. Get OAuth credentials
 github_token <- oauth2.0_token(oauth_endpoints("github"), my_app)
+
 
 # 4. Use the API
 gtoken <- config(token=github_token) # Get token
@@ -49,6 +57,18 @@ acs <- read.csv("acs.csv")
 library("sqldf")
 head(warpbreaks)
 sqldf("select pwgtp1 from acs where AGEP < 50")
+
+#
+# Question 3
+# Using the same dataframe you created in the previous problem, what is the 
+# equivalent function to unique(acs$AGEP)?
+#
+
+q3_a <- unique(acs$AGEP)
+q3_b <- sqldf("select distinct AGEP from acs")
+
+# sqldf returns a dataframe
+identical(q3_a, q3_b[,1]) # They are identical
 
 #
 # Question 4
